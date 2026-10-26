@@ -11,6 +11,8 @@ Developer assessment.
 | UI | Next.js (App Router), TypeScript, Tailwind CSS |
 | Tests | Vitest + Supertest against a real PostgreSQL |
 
+![Accounts overview](docs/screenshots/accounts.jpg)
+
 Documentation:
 
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): the design and the reasoning behind every decision
@@ -74,7 +76,7 @@ Useful scripts:
 | `npm run db:migrate:dev` | create a new migration from schema changes |
 | `npm run db:studio` | open Prisma Studio |
 | `npm test` | integration tests against `TEST_DATABASE_URL` |
-| `npm run lint` / `npm run typecheck` | eslint / tsc --noEmit |
+| `npm run typecheck` | tsc --noEmit |
 
 ### 3. Web UI
 
@@ -140,6 +142,12 @@ curl -s -X POST localhost:4000/transfers -H 'content-type: application/json' \
 ```
 
 ---
+
+## Screens
+
+| Account history | Transfer |
+|---|---|
+| ![Account page](docs/screenshots/account-history.jpg) | ![Transfer page](docs/screenshots/transfer.jpg) |
 
 ## Tests
 
