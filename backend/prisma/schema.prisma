@@ -1,0 +1,67 @@
+// Data model for the ledger. See docs/ARCHITECTURE.md §4 for the reasoning.
+// Constraints Prisma cannot express (CHECKs, the immutability trigger) live in
+// prisma/migrations/*/migration.sql alongside the generated DDL.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TransactionType {
+  credit
+  debit
+}
+
+model Account {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String   @db.VarChar(100)
+  balance   Decimal  @default(0) @db.Decimal(19, 4)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  transactions Transaction[]
+  transfersOut Transfer[]    @relation("TransferFrom")
+  transfersIn  Transfer[]    @relation("TransferTo")
+
+  @@map("accounts")
+}
+
+model Transaction {
+  id          String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  accountId   String          @map("account_id") @db.Uuid
+  type        TransactionType
+  amount      Decimal         @db.Decimal(19, 4)
+  description String?         @db.VarChar(255)
+  referenceId String          @map("reference_id") @db.VarChar(100)
+  transferId  String?         @map("transfer_id") @db.Uuid
+  createdAt   DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  account  Account   @relation(fields: [accountId], references: [id])
+  transfer Transfer? @relation(fields: [transferId], references: [id])
+
+  // Duplicate protection: the database, not the app, is the arbiter.
+  @@unique([accountId, referenceId])
+  // Serves the history query: filter by account, newest first, stable tiebreak.
+  @@index([accountId, createdAt(sort: Desc), id(sort: Desc)])
+  @@map("transactions")
+}
+
+model Transfer {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fromAccountId String   @map("from_account_id") @db.Uuid
+  toAccountId   String   @map("to_account_id") @db.Uuid
+  amount        Decimal  @db.Decimal(19, 4)
+  referenceId   String   @map("reference_id") @db.VarChar(100)
+  description   String?  @db.VarChar(255)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  fromAccount  Account       @relation("TransferFrom", fields: [fromAccountId], references: [id])
+  toAccount    Account       @relation("TransferTo", fields: [toAccountId], references: [id])
+  transactions Transaction[]
+
+  @@map("transfers")
+}
