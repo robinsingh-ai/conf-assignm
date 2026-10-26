@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+
+  --color-cream: #fff8f1;
+  --color-ink: #3b2f4a;
+  --color-ink-soft: #7a6f88;
+  --color-line: #f1e4da;
+
+  --color-peach: #ffd9c7;
+  --color-pink: #ffcfe0;
+  --color-mint: #cdf3e3;
+  --color-lavender: #e4d9ff;
+  --color-butter: #fff1b8;
+  --color-sky: #d3e9ff;
+
+  --color-berry: #e85d8a;
+  --color-berry-dark: #cf4474;
+  --color-leaf: #2fa37a;
+  --color-leaf-soft: #e3f7ee;
+  --color-coral: #e5533d;
+  --color-coral-soft: #ffe8e3;
+
+  --shadow-soft: 0 10px 30px -12px rgba(59, 47, 74, 0.18);
+  --radius-blob: 1.75rem;
+}
+
+html {
+  background: var(--color-cream);
+}
+
+body {
+  color: var(--color-ink);
+  background:
+    radial-gradient(circle at 10% 0%, rgba(255, 207, 224, 0.55), transparent 40%),
+    radial-gradient(circle at 90% 10%, rgba(205, 243, 227, 0.6), transparent 35%),
+    radial-gradient(circle at 50% 100%, rgba(228, 217, 255, 0.5), transparent 40%),
+    var(--color-cream);
+  min-height: 100%;
+}
+
+::selection {
+  background: var(--color-pink);
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.pop-in {
+  animation: pop-in 220ms ease-out both;
+}
